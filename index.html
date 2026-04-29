@@ -3,6 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Be Back Later</title>
+
   <style>
     body {
       margin: 0;
@@ -35,8 +36,8 @@
       font-size: 1rem;
       cursor: pointer;
       opacity: 0.6;
-      transition: opacity 0.2s ease;
       position: relative;
+      transition: opacity 0.2s ease;
     }
 
     .icon:hover {
@@ -60,71 +61,85 @@
       transition: opacity 0.2s ease;
     }
 
-    /* Hover shows tooltip */
-    .icon:hover .tooltip {
-      opacity: 1;
-    }
-
-    /* Click locks tooltip open */
     .icon.active .tooltip {
       opacity: 1;
     }
+
+    @media (hover: hover) {
+      .icon:hover .tooltip {
+        opacity: 1;
+      }
+    }
+
+    .icon.active {
+      z-index: 10;
+      opacity: 1;
+    }
+
+    .icon.faded .tooltip {
+      opacity: 0.25 !important;
+    }
   </style>
 </head>
+
 <body>
 
   <h1>gone swimming, be back later</h1>
 
   <footer>
-    <div class="icon" id="locationIcon" onclick="toggleLock(this)">
+    <div class="icon" onclick="setActive(this)">
       📍
       <div class="tooltip">currently in Dublin, Ireland</div>
     </div>
 
-    <div class="icon" id="emailIcon" onclick="copyAndToggle(this)">
+    <div class="icon" id="emailIcon" onclick="setActive(this)">
       ✉️
       <div class="tooltip" id="emailTooltip"></div>
     </div>
   </footer>
 
   <script>
+    let activeIcon = null;
+    const icons = document.querySelectorAll(".icon");
+
+    function setActive(el) {
+      icons.forEach(i => i.classList.remove("faded"));
+
+      if (activeIcon && activeIcon !== el) {
+        activeIcon.classList.remove("active");
+      }
+
+      if (el.classList.contains("active")) {
+        el.classList.remove("active");
+        activeIcon = null;
+      } else {
+        el.classList.add("active");
+        activeIcon = el;
+      }
+    }
+
+    icons.forEach(icon => {
+      icon.addEventListener("mouseenter", () => {
+        if (!activeIcon) return;
+
+        icons.forEach(i => i.classList.remove("faded"));
+
+        if (activeIcon !== icon) {
+          activeIcon.classList.add("faded");
+        }
+      });
+
+      icon.addEventListener("mouseleave", () => {
+        icons.forEach(i => i.classList.remove("faded"));
+      });
+    });
+
+    // ===== EMAIL OBFUSCATION =====
     const user = "ryukakong";
     const domain = "gmail.com";
     const email = user + "@" + domain;
 
     document.getElementById("emailTooltip").textContent = email;
-
-    let activeIcon = null;
-
-    function toggleLock(el) {
-      if (activeIcon && activeIcon !== el) {
-        activeIcon.classList.remove("active");
-      }
-
-      if (el.classList.contains("active")) {
-        el.classList.remove("active");
-        activeIcon = null;
-      } else {
-        el.classList.add("active");
-        activeIcon = el;
-      }
-    }
-
-    function copyAndToggle(el) {
-      navigator.clipboard.writeText(email);
-
-      if (activeIcon && activeIcon !== el) {
-        activeIcon.classList.remove("active");
-      }
-
-      if (el.classList.contains("active")) {
-        el.classList.remove("active");
-        activeIcon = null;
-      } else {
-        el.classList.add("active");
-        activeIcon = el;
-      }
-    }
   </script>
 
 </body>
