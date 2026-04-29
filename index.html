@@ -54,12 +54,18 @@
       padding: 4px 8px;
       border-radius: 4px;
       white-space: nowrap;
+
       opacity: 0;
       pointer-events: none;
       transition: opacity 0.2s ease;
     }
 
-    .icon:hover .tooltip,
+    /* Hover shows tooltip */
+    .icon:hover .tooltip {
+      opacity: 1;
+    }
+
+    /* Click locks tooltip open */
     .icon.active .tooltip {
       opacity: 1;
     }
@@ -70,25 +76,55 @@
   <h1>gone swimming, be back later</h1>
 
   <footer>
-    <div class="icon" onclick="toggle(this)">
+    <div class="icon" id="locationIcon" onclick="toggleLock(this)">
       📍
       <div class="tooltip">currently in Dublin, Ireland</div>
     </div>
 
-    <div class="icon" onclick="toggle(this)">
+    <div class="icon" id="emailIcon" onclick="copyAndToggle(this)">
       ✉️
-      <div class="tooltip" id="email"></div>
+      <div class="tooltip" id="emailTooltip"></div>
     </div>
   </footer>
 
   <script>
-    function toggle(el) {
-      el.classList.toggle("active");
-    }
-
     const user = "ryukakong";
     const domain = "gmail.com";
-    document.getElementById("email").textContent = user + "@" + domain;
+    const email = user + "@" + domain;
+
+    document.getElementById("emailTooltip").textContent = email;
+
+    let activeIcon = null;
+
+    function toggleLock(el) {
+      if (activeIcon && activeIcon !== el) {
+        activeIcon.classList.remove("active");
+      }
+
+      if (el.classList.contains("active")) {
+        el.classList.remove("active");
+        activeIcon = null;
+      } else {
+        el.classList.add("active");
+        activeIcon = el;
+      }
+    }
+
+    function copyAndToggle(el) {
+      navigator.clipboard.writeText(email);
+
+      if (activeIcon && activeIcon !== el) {
+        activeIcon.classList.remove("active");
+      }
+
+      if (el.classList.contains("active")) {
+        el.classList.remove("active");
+        activeIcon = null;
+      } else {
+        el.classList.add("active");
+        activeIcon = el;
+      }
+    }
   </script>
 
 </body>
